@@ -108,7 +108,7 @@ read_tmp(void)
     tempint = (absraw >> 8) * sign;
     tempfrac = ((absraw >> 4) % 16) * 625;	// Info in 1/10000 of degree
     minus = ((tempint == 0) & (sign == -1)) ? '-' : ' ';
-    PRINTF("Temp = %c%d.%04d\n", minus, tempint, tempfrac);
+    PRINTF("Temp from func= %c%d.%04d\n", minus, tempint, tempfrac);
     return tempint;
 }
 
@@ -117,16 +117,15 @@ read_tmp(void)
 static void
 send_packet(void *ptr)
 {
-  PRINTF("before read tmp");
-  //int16_t tempint = read_tmp();
-  int16_t tempint = 18;
-  PRINTF("tempint: %d",tempint);
+  int16_t tempint = read_tmp();
+  //int16_t tempint = 18;
+  PRINTF("/ntempint sendpacket: %d",tempint);
   static int seq_id;
   char buf[MAX_PAYLOAD_LEN];
   seq_id++;
-  PRINTF("WHAT send to %d 'Hello %d'\n",
-         server_ipaddr.u8[sizeof(server_ipaddr.u8) - 1], seq_id);
-  sprintf(buf, "Hello %d from the client", tempint);
+ // PRINTF("WHAT send to %d 'Hello %d'\n",
+//         server_ipaddr.u8[sizeof(server_ipaddr.u8) - 1], seq_id);
+  sprintf(buf, "Hey my temp: %d from the client", tempint);
   uip_udp_packet_sendto(client_conn, buf, strlen(buf),
                         &server_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
 }
